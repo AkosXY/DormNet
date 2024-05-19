@@ -11,4 +11,4 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
       MONGO_INITDB_DATABASE: sport-service
     volumes:
-      - ./data:/data/db
+      - ./mongodb/mongodb_data:/data/db
