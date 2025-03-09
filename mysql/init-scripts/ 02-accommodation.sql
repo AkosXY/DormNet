@@ -1,5 +1,7 @@
 CREATE DATABASE IF NOT EXISTS accommodation_service;
 
+use accommodation_service;
+
 CREATE TABLE IF NOT EXISTS rooms (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     capacity INT,

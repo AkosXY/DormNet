@@ -1,5 +1,7 @@
 CREATE DATABASE IF NOT EXISTS resource_service;
 
+use resource_service;
+
 CREATE TABLE IF NOT EXISTS resource (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),

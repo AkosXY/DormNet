@@ -1,5 +1,7 @@
 CREATE DATABASE IF NOT EXISTS reservation_service;
 
+use reservation_service;
+
 CREATE TABLE IF NOT EXISTS reservation (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     reservation_number VARCHAR(255),
