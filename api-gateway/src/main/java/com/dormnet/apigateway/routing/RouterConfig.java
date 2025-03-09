@@ -36,7 +36,7 @@ public class RouterConfig {
                 .route(path("/api/resource/available"), http(resourceServiceUrl))
                 .route(POST("/api/resource/makeUnavailable"), http(resourceServiceUrl))
                 .route(POST("/api/resource/makeAvailable"), http(resourceServiceUrl))
-                .route(POST("/api/resource/admin/add"), http(resourceServiceUrl))
+                .route(POST("/api/resource/add"), http(resourceServiceUrl))
                 .build();
     }
 
