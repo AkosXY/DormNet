@@ -50,22 +50,6 @@ services:
     networks:
       - app-network
 
-  api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
-    container_name: api-gateway
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/api_gateway
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=password
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - app-network
 
   reservation-service:
     build:
@@ -124,7 +108,6 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - api-gateway
       - sport-service
       - reservation-service
       - resource-service
