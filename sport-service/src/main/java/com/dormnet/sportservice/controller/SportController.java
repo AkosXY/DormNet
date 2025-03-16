@@ -7,6 +7,7 @@ import com.dormnet.sportservice.service.SportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class SportController {
     private final SportService sportService;
 
     @PostMapping
+    @PreAuthorize("hasRole('admin')")
     @ResponseStatus(HttpStatus.CREATED)
     public SportEventResponse createSportEvent(@RequestBody SportEventRequest sportEventRequest){
         return sportService.createSportEvent(sportEventRequest);
@@ -30,6 +32,7 @@ public class SportController {
     }
 
     @PostMapping("/{eventId}/add_entries")
+    @PreAuthorize("hasRole('admin')")
     @ResponseStatus(HttpStatus.CREATED)
     public SportEventResponse addEntryToSportEvent(@PathVariable String eventId, @RequestBody Entry entryRequest) {
         return sportService.addEntryToSportEvent(eventId, entryRequest);
