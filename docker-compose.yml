@@ -33,6 +33,22 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      app-network:
+        aliases:
+          - redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 5s
+
   accommodation-service:
     build:
       context: accommodation-service
@@ -46,6 +62,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
       mysql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - app-network
