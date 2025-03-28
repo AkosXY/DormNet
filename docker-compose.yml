@@ -154,6 +154,15 @@ services:
     networks:
       - app-network
 
+  frontend:
+    build:
+      context: ./dormnet-frontend
+    container_name: angular-app
+    ports:
+      - "8080:80"
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
