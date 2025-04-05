@@ -14,10 +14,10 @@ public class DTOConverter {
         List<ResidentDTO> residentDTOs = room.getResidents().stream()
                 .map(DTOConverter::convertToResidentDTO)
                 .collect(Collectors.toList());
-        return new RoomDTO(room.getId(), room.getCapacity(), room.getResidents().size(), residentDTOs);
+        return new RoomDTO(room.getId(),room.getNumber(), room.getCapacity(), room.getResidents().size(), residentDTOs);
     }
 
     public static ResidentDTO convertToResidentDTO(Resident resident) {
-        return new ResidentDTO(resident.getId(), resident.getName());
+        return new ResidentDTO(resident.getId(), resident.getName(), resident.getEmail(), resident.getPhone());
     }
 }

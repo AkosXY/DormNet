@@ -58,7 +58,6 @@ public class ResidentService {
             if (room.getNumOfResidents() <= room.getCapacity()) {
                 resident.setRoom(room);
                 residentRepository.save(resident);
-
                 room.setNumOfResidents(room.getNumOfResidents() + 1);
                 roomRepository.save(room);
             } else {

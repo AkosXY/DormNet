@@ -13,6 +13,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RoomDTO implements Serializable {
     private Long id;
+    private String number;
     private int capacity;
     private int numOfResidents;
     private List<ResidentDTO> residents;

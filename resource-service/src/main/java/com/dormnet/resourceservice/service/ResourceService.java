@@ -8,8 +8,10 @@ import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,13 @@ public class ResourceService {
     public boolean isAvailable(Long id){
         Optional<Resource> optionalResource = resourceRepository.findById(id);
         return optionalResource.isPresent() && optionalResource.get().isAvailable();
+    }
+
+    public List<Resource> getAvailableResources() {
+        return resourceRepository.findAll()
+                .stream()
+                .filter(Resource::isAvailable)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -47,7 +56,6 @@ public class ResourceService {
         } else {
             return false;
         }
-
     }
 
     public boolean makeAvailable(Long id) {

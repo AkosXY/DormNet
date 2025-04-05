@@ -20,6 +20,7 @@ public class Resident {
     private String name;
     private String email;
     private String username;
+    private String phone;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")

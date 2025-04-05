@@ -5,6 +5,7 @@ import com.dormnet.accommodationservice.modell.dto.ResidentDTO;
 import com.dormnet.accommodationservice.service.ResidentService;
 import com.dormnet.accommodationservice.utils.DTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,6 +29,15 @@ public class ResidentController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/unassigned")
+    public List<ResidentDTO> getResidentsWithoutRoom() {
+        List<Resident> residents = residentService.findAll();
+        return residents.stream()
+                .filter(resident -> resident.getRoom() == null)
+                .map(DTOConverter::convertToResidentDTO)
+                .collect(Collectors.toList());
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Resident> createResident(@RequestBody Resident resident) {
@@ -38,6 +48,7 @@ public class ResidentController {
 
     @PostMapping("/{id}/unassign")
     @PreAuthorize("hasRole('admin')")
+    @CacheEvict(value = "rooms", allEntries = true)
     public ResponseEntity<Void> unassignResidentFromRoom(@PathVariable Long id) {
         residentService.unAssignResidentFromRoom(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -46,6 +57,7 @@ public class ResidentController {
 
     @PostMapping("/{residentId}/assign/{roomId}")
     @PreAuthorize("hasRole('admin')")
+    @CacheEvict(value = "rooms", allEntries = true)
     public ResponseEntity<Void> assignResidentToRoom(@PathVariable Long residentId, @PathVariable Long roomId) {
         residentService.assignResidentToRoom(residentId, roomId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

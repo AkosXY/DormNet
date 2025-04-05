@@ -8,7 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,7 +21,7 @@ public class ReservationService {
     private final ResourceClient resourceClient;
 
     @Transactional
-    public String placeReservation(ReservationRequest reservationRequest){
+    public String placeReservation(ReservationRequest reservationRequest, String email){
         var isAvailable = resourceClient.isAvailable(reservationRequest.resourceId());
 
         if (isAvailable) {
@@ -31,7 +31,7 @@ public class ReservationService {
                 Reservation reservation = new Reservation();
                 reservation.setReservationNumber(UUID.randomUUID().toString());
                 reservation.setResourceId(reservationRequest.resourceId());
-                reservation.setEmail(reservationRequest.email());
+                reservation.setEmail(email);
                 reservation.setStartDate(reservationRequest.startDate());
                 reservation.setStopDate(reservationRequest.stopDate());
                 reservationRepository.save(reservation);
@@ -56,5 +56,15 @@ public class ReservationService {
         } else {
             throw new EntityNotFoundException("Reservation with ID " + reservationId + " not found");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> getReservationsByEmail(String email) {
+        return reservationRepository.findByEmail(email);
     }
 }
