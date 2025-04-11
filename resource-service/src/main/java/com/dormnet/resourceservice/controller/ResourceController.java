@@ -30,6 +30,13 @@ public class ResourceController {
         return resourceService.getAvailableResources();
     }
 
+    @GetMapping("/getResources")
+    @PreAuthorize("isAuthenticated()")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Resource> getResources() {
+        return resourceService.getResources();
+    }
+
     @PostMapping("/makeUnavailable")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)

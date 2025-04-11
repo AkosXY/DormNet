@@ -18,6 +18,6 @@ public class DTOConverter {
     }
 
     public static ResidentDTO convertToResidentDTO(Resident resident) {
-        return new ResidentDTO(resident.getId(), resident.getName(), resident.getEmail(), resident.getPhone());
+        return new ResidentDTO(resident.getId(), resident.getName(), resident.getUsername(), resident.getEmail(), resident.getPhone());
     }
 }

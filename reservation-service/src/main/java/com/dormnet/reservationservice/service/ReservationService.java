@@ -21,38 +21,42 @@ public class ReservationService {
     private final ResourceClient resourceClient;
 
     @Transactional
-    public String placeReservation(ReservationRequest reservationRequest, String email){
-        var isAvailable = resourceClient.isAvailable(reservationRequest.resourceId());
+    public String placeReservation(ReservationRequest reservationRequest, String email) {
+        boolean isAvailable = resourceClient.isAvailable(reservationRequest.resourceId());
 
-        if (isAvailable) {
-            boolean successfullyMadeUnavailable = resourceClient.makeUnavailable(reservationRequest.resourceId());
-
-            if (successfullyMadeUnavailable) {
-                Reservation reservation = new Reservation();
-                reservation.setReservationNumber(UUID.randomUUID().toString());
-                reservation.setResourceId(reservationRequest.resourceId());
-                reservation.setEmail(email);
-                reservation.setStartDate(reservationRequest.startDate());
-                reservation.setStopDate(reservationRequest.stopDate());
-                reservationRepository.save(reservation);
-
-                return "Reservation successfully placed. Reservation number: " + reservation.getReservationNumber();
-            } else {
-                return "Failed to make resource unavailable. Reservation not placed.";
-            }
-        } else {
-            return "Resource with ID " + reservationRequest.resourceId() + " is not available. Reservation not placed.";
+        if (!isAvailable) {
+            return "Resource with ID " + reservationRequest.resourceId() + " is not available for rental.";
         }
+
+        List<Reservation> overlappingReservations = reservationRepository
+                .findByResourceIdAndTimeOverlap(
+                        reservationRequest.resourceId(),
+                        reservationRequest.startDate(),
+                        reservationRequest.stopDate()
+                );
+
+        if (!overlappingReservations.isEmpty()) {
+            return "Resource is already reserved during the requested time.";
+        }
+
+        Reservation reservation = new Reservation();
+        reservation.setReservationNumber(UUID.randomUUID().toString());
+        reservation.setResourceId(reservationRequest.resourceId());
+        reservation.setEmail(email);
+        reservation.setStartDate(reservationRequest.startDate());
+        reservation.setStopDate(reservationRequest.stopDate());
+        reservationRepository.save(reservation);
+
+        return "Reservation placed. Reservation number: " + reservation.getReservationNumber();
     }
+
 
     @Transactional
     public void dropReservation(Long reservationId) {
         Optional<Reservation> optionalReservation = reservationRepository.findById(reservationId);
 
         if (optionalReservation.isPresent()) {
-            Reservation reservation = optionalReservation.get();
-            reservationRepository.delete(reservation);
-            resourceClient.makeAvailable(reservation.getResourceId());
+            reservationRepository.delete(optionalReservation.get());
         } else {
             throw new EntityNotFoundException("Reservation with ID " + reservationId + " not found");
         }

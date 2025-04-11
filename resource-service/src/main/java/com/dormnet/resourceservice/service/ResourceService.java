@@ -69,4 +69,8 @@ public class ResourceService {
             return false;
         }
     }
+
+    public List<Resource> getResources() {
+        return resourceRepository.findAll();
+    }
 }

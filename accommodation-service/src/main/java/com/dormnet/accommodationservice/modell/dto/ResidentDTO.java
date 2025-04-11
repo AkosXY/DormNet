@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class ResidentDTO implements Serializable {
     private Long id;
     private String name;
+    private String username;
     private String email;
     private String phone;
 }
