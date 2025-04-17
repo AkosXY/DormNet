@@ -46,6 +46,7 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setReservationNumber(UUID.randomUUID().toString());
         reservation.setResourceId(reservationRequest.resourceId());
+        reservation.setResourceName(reservationRequest.resourceName());
         reservation.setEmail(email);
         reservation.setStartDate(reservationRequest.startDate());
         reservation.setStopDate(reservationRequest.stopDate());

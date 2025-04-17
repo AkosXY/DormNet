@@ -18,6 +18,7 @@ public class Reservation {
     private Long id;
     private String reservationNumber;
     private Long resourceId;
+    private String resourceName;
     private String email;
     private Date startDate;
     private Date stopDate;
