@@ -49,12 +49,27 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
+    @GetMapping("/allActive")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<List<Reservation>> getActiveReservations() {
+        List<Reservation> activeReservations = reservationService.getActiveReservations();
+        return ResponseEntity.ok(activeReservations);
+    }
+
     @GetMapping("/reservations")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Reservation>> getMyReservations(@AuthenticationPrincipal Jwt jwt) {
         String userEmail = jwt.getClaim("email");
         List<Reservation> reservations = reservationService.getReservationsByEmail(userEmail);
         return ResponseEntity.ok(reservations);
+    }
+
+    @GetMapping("/activeReservations")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Reservation>> getMyActiveReservations(@AuthenticationPrincipal Jwt jwt) {
+        String userEmail = jwt.getClaim("email");
+        List<Reservation> activeReservations = reservationService.getActiveReservationsByEmail(userEmail);
+        return ResponseEntity.ok(activeReservations);
     }
 
     @GetMapping("/availability")

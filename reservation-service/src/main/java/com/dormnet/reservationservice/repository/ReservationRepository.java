@@ -11,6 +11,14 @@ import java.util.List;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findByEmail(String email);
 
+    @Query("SELECT r FROM Reservation r WHERE r.email = :email AND r.startDate >= CURRENT_DATE")
+    List<Reservation> findActiveByEmail(@Param("email") String email);
+
+
+    @Query("SELECT r FROM Reservation r WHERE r.startDate >= CURRENT_DATE")
+    List<Reservation> findAllActiveReservations();
+
+
     @Query("SELECT r FROM Reservation r WHERE r.resourceId = :resourceId AND " +
             "r.startDate < :stopDate AND r.stopDate > :startDate")
     List<Reservation> findByResourceIdAndTimeOverlap(

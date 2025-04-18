@@ -73,9 +73,21 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
+    public List<Reservation> getActiveReservations() {
+        return reservationRepository.findAllActiveReservations();
+    }
+
+
+    @Transactional(readOnly = true)
     public List<Reservation> getReservationsByEmail(String email) {
         return reservationRepository.findByEmail(email);
     }
+
+    @Transactional(readOnly = true)
+    public List<Reservation> getActiveReservationsByEmail(String email) {
+        return reservationRepository.findActiveByEmail(email);
+    }
+
 
     @Transactional(readOnly = true)
     public List<LocalTime> getAvailableTimeSlots(Long resourceId, LocalDate date, int durationMinutes) {
