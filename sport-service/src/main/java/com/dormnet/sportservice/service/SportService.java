@@ -46,6 +46,28 @@ public class SportService {
         return mapToSportEventResponse(savedSportEvent);
     }
 
+    public void deleteSportEvent(String eventId) {
+        if (!sportRepository.existsById(eventId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sport event not found with ID: " + eventId);
+        }
+        sportRepository.deleteById(eventId);
+    }
+
+    public void deleteEntryFromSportEvent(String eventId, Entry entryRequest) {
+        SportEvent sportEvent = sportRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sport event not found with ID: " + eventId));
+
+        boolean removed = sportEvent.getEntries().removeIf(entry ->
+                entry.getParticipantName().equals(entryRequest.getParticipantName()) &&
+                        entry.getScore() == entryRequest.getScore());
+
+        if (!removed) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Entry not found in sport event");
+        }
+
+        sportRepository.save(sportEvent);
+    }
+
     private SportEventResponse mapToSportEventResponse(SportEvent sportEvent) {
         return new SportEventResponse(sportEvent.getId(), sportEvent.getName(), sportEvent.getDate(), sportEvent.getEntries());
     }

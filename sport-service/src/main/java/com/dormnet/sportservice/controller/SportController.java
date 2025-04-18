@@ -26,6 +26,7 @@ public class SportController {
     }
 
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public List<SportEventResponse> getAllSportEvents(){
         return sportService.getAllSportEvents();
@@ -37,5 +38,20 @@ public class SportController {
     public SportEventResponse addEntryToSportEvent(@PathVariable String eventId, @RequestBody Entry entryRequest) {
         return sportService.addEntryToSportEvent(eventId, entryRequest);
     }
+
+    @DeleteMapping("/{eventId}")
+    @PreAuthorize("hasRole('admin')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSportEvent(@PathVariable String eventId) {
+        sportService.deleteSportEvent(eventId);
+    }
+
+    @DeleteMapping("/{eventId}/delete_entry")
+    @PreAuthorize("hasRole('admin')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteEntryFromSportEvent(@PathVariable String eventId, @RequestBody Entry entryRequest) {
+        sportService.deleteEntryFromSportEvent(eventId, entryRequest);
+    }
+
 
 }
