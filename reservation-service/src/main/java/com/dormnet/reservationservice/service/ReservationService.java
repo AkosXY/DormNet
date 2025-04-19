@@ -131,5 +131,12 @@ public class ReservationService {
         return freeSlots;
     }
 
+    @Transactional
+    public void deleteReservationsByResourceId(Long resourceId) {
+        List<Reservation> reservations = reservationRepository.findByResourceId(resourceId);
+        reservationRepository.deleteAll(reservations);
+    }
+
+
 
 }

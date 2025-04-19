@@ -1,5 +1,6 @@
 package com.dormnet.resourceservice.service;
 
+import com.dormnet.resourceservice.kafka.config.ResourceEventProducer;
 import com.dormnet.resourceservice.model.Resource;
 import com.dormnet.resourceservice.model.ResourceRequest;
 import com.dormnet.resourceservice.repository.ResourceRepository;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public class ResourceService {
 
     private final ResourceRepository resourceRepository;
+
+    private final ResourceEventProducer eventProducer;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -52,6 +55,7 @@ public class ResourceService {
             Resource resource = optionalResource.get();
             resource.setAvailable(false);
             resourceRepository.save(resource);
+            eventProducer.sendResourceUnavailableEvent(id);
             return true;
         } else {
             return false;

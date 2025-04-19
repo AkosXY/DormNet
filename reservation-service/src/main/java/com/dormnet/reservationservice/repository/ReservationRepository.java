@@ -14,6 +14,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT r FROM Reservation r WHERE r.email = :email AND r.startDate >= CURRENT_DATE")
     List<Reservation> findActiveByEmail(@Param("email") String email);
 
+    List<Reservation> findByResourceId(Long resourceId);
 
     @Query("SELECT r FROM Reservation r WHERE r.startDate >= CURRENT_DATE")
     List<Reservation> findAllActiveReservations();
