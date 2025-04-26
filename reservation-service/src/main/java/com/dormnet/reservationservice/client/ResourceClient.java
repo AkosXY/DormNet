@@ -11,10 +11,4 @@ public interface ResourceClient {
     @RequestMapping(method = RequestMethod.GET, value = "api/resource/available")
     boolean isAvailable(@RequestParam("id") Long resourceId);
 
-
-    @RequestMapping(method = RequestMethod.POST, value = "api/resource/makeUnavailable")
-    boolean makeUnavailable(@RequestParam("id") Long resourceId);
-
-    @RequestMapping(method = RequestMethod.POST, value = "api/resource/makeAvailable")
-    void makeAvailable(@RequestParam("id") Long resourceId);
 }

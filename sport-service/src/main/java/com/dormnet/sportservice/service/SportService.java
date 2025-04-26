@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,10 +20,11 @@ public class SportService {
     private final SportRepository sportRepository;
 
     public SportEventResponse createSportEvent(SportEventRequest sportEventRequest) {
+        List<Entry> entries = sportEventRequest.entries() != null ? sportEventRequest.entries() : new ArrayList<>();
         SportEvent sportEvent = SportEvent.builder()
                 .name(sportEventRequest.name())
                 .date(sportEventRequest.date())
-                .entries(sportEventRequest.entries())
+                .entries(entries)
                 .build();
         sportRepository.save(sportEvent);
         return mapToSportEventResponse(sportEvent);

@@ -15,23 +15,4 @@ public class ResourceClientStub {
                         .withHeader("Content-Type", "application/json")
                         .withBody(String.valueOf(isAvailable))));
     }
-
-    public static void stubMakeUnavailable(Long id, boolean success) {
-        stubFor(post(urlEqualTo("/api/resource/makeUnavailable?id=" + id))
-                .willReturn(aResponse()
-                        .withStatus(success ? 200 : 400)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(String.valueOf(success))));
-    }
-
-    public static void stubMakeAvailable(Long id, boolean success) {
-        stubFor(post(urlEqualTo("/api/resource/makeAvailable?id=" + id))
-                .willReturn(aResponse()
-                        .withStatus(success ? 200 : 400)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(String.valueOf(success))));
-    }
-
-
-
 }
