@@ -1,23 +1,109 @@
 services:
-  mysql:
+#  mysql:
+#    image: mysql:latest
+#    container_name: mysql
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: password
+#    volumes:
+#      - mysql_data:/var/lib/mysql
+#      - ./mysql/init-scripts/:/docker-entrypoint-initdb.d/
+#
+#    networks:
+#      - app-network
+#    healthcheck:
+#      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+#      interval: 10s
+#      retries: 5
+#      start_period: 10s
+#      timeout: 10s
+
+
+  mysql_accommodation:
     image: mysql:latest
-    container_name: mysql
+    container_name: mysql_accommodation
     ports:
       - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./mysql/init-scripts/:/docker-entrypoint-initdb.d/
+      - mysql_accommodation_data:/var/lib/mysql
+      - ./mysql/init-scripts/01-accommodation.sql:/docker-entrypoint-initdb.d/init.sql
 
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
       interval: 10s
       retries: 5
       start_period: 10s
       timeout: 10s
+
+
+  mysql_resource:
+    image: mysql:latest
+    container_name: mysql_resource
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - mysql_resource_data:/var/lib/mysql
+      - ./mysql/init-scripts/02-resource.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+
+  mysql_reservation:
+    image: mysql:latest
+    container_name: mysql_reservation
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - mysql_reservation_data:/var/lib/mysql
+      - ./mysql/init-scripts/03-reservation.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+
+  mysql_keycloak:
+    image: mysql:latest
+    container_name: mysql_keycloak
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - mysql_keycloak_data:/var/lib/mysql
+      - ./mysql/init-scripts/04-keycloak.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+
 
   mongodb_sport:
     image: mongo:latest
@@ -74,11 +160,11 @@ services:
     ports:
       - "8081:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/accommodation_service
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_accommodation:3306/accommodation_service
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
-      mysql:
+      mysql_accommodation:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -94,11 +180,11 @@ services:
     ports:
       - "8082:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/reservation_service
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_reservation:3306/reservation_service
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
-      mysql:
+      mysql_reservation:
         condition: service_healthy
     networks:
       - app-network
@@ -111,11 +197,11 @@ services:
     ports:
       - "8083:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/resource_service
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_resource:3306/resource_service
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
-      mysql:
+      mysql_resource:
         condition: service_healthy
     networks:
       - app-network
@@ -131,7 +217,6 @@ services:
       - MONGO_URI=mongodb://mongodb_sport:27017/sport-service
     depends_on:
       - mongodb_sport
-      - mysql
     networks:
       - app-network
 
@@ -157,7 +242,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD : admin
       KC_DB: mysql
-      KC_DB_URL: jdbc:mysql://mysql:3306/keycloak
+      KC_DB_URL: jdbc:mysql://mysql_keycloak:3306/keycloak
       KC_DB_USERNAME: root
       KC_DB_PASSWORD: password
       KEYCLOAK_HTTP_PORT: 9090
@@ -166,7 +251,7 @@ services:
     ports:
       - "9090:8080"
     depends_on:
-      mysql:
+      mysql_keycloak:
         condition: service_healthy
     networks:
       - app-network
@@ -176,5 +261,8 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  mysql_accommodation_data:
+  mysql_resource_data:
+  mysql_reservation_data:
+  mysql_keycloak_data:
   mongodb_sport_data:
