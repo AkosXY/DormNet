@@ -1,24 +1,4 @@
 services:
-#  mysql:
-#    image: mysql:latest
-#    container_name: mysql
-#    ports:
-#      - "3306:3306"
-#    environment:
-#      MYSQL_ROOT_PASSWORD: password
-#    volumes:
-#      - mysql_data:/var/lib/mysql
-#      - ./mysql/init-scripts/:/docker-entrypoint-initdb.d/
-#
-#    networks:
-#      - app-network
-#    healthcheck:
-#      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
-#      interval: 10s
-#      retries: 5
-#      start_period: 10s
-#      timeout: 10s
-
 
   mysql_accommodation:
     image: mysql:latest
