@@ -58,4 +58,10 @@ public class ResourceController {
         return resourceService.createResource(resourceRequest);
     }
 
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('admin')")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean deleteResource(@RequestParam Long id) {
+        return resourceService.deleteResource(id);
+    }
 }

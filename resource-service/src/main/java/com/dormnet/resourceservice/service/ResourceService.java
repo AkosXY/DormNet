@@ -77,4 +77,17 @@ public class ResourceService {
     public List<Resource> getResources() {
         return resourceRepository.findAll();
     }
+
+    @Transactional
+    public boolean deleteResource(Long id) {
+        Optional<Resource> optionalResource = resourceRepository.findById(id);
+        if (optionalResource.isPresent()) {
+            Resource resource = optionalResource.get();
+            if (!resource.isAvailable()) {
+                resourceRepository.delete(resource);
+                return true;
+            }
+        }
+        return false;
+    }
 }
