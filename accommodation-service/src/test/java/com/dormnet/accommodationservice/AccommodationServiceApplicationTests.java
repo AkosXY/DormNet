@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.*;
 class AccommodationServiceApplicationTests {
 
 	@ServiceConnection
-	static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:latest");
+	static MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0.35");
 
 	@LocalServerPort
 	private Integer port;
@@ -195,5 +195,26 @@ class AccommodationServiceApplicationTests {
 				.when().post("/api/resident/" + residentId + "/unassign")
 				.then().statusCode(403)
 				.log().all();
+	}
+
+	@Test
+	void adminCreatesRoomWithNullResidents_resultsInEmptyList() {
+		// Prepare JSON with residents=null
+		String roomJson = """
+        {
+            "number": "C777",
+            "capacity": 2,
+            "numOfResidents": 0,
+            "residents": null
+        }
+    """;
+		RestAssured.given()
+				.auth().oauth2(adminToken)
+				.contentType("application/json")
+				.body(roomJson)
+				.when().post("/api/rooms")
+				.then().statusCode(201)
+				.body("residents", notNullValue())
+				.body("residents.size()", equalTo(0));
 	}
 }

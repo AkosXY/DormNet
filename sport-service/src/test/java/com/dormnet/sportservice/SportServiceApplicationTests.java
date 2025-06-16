@@ -123,5 +123,50 @@ class SportServiceApplicationTests {
             .statusCode(404);
 	}
 
+	@Test
+	void testDeleteEntryFromSportEvent() {
+		String sportEventJson = "{\"name\": \"Entry Deletion Event\", \"date\": \"2024-06-01\"}";
+
+		String eventId = given()
+				.auth().oauth2(adminToken)
+				.contentType(ContentType.JSON)
+				.body(sportEventJson)
+				.when()
+				.post("/api/sport")
+				.then()
+				.statusCode(201)
+				.extract()
+				.path("id");
+
+		String entryJson = "{\"participantName\": \"John Doe\", \"score\": 99}";
+
+		given()
+				.auth().oauth2(adminToken)
+				.contentType(ContentType.JSON)
+				.body(entryJson)
+				.when()
+				.post("/api/sport/" + eventId + "/add_entries")
+				.then()
+				.statusCode(201)
+				.body("entries.size()", Matchers.equalTo(1))
+				.body("entries[0].participantName", Matchers.equalTo("John Doe"));
+
+		given()
+				.auth().oauth2(adminToken)
+				.contentType(ContentType.JSON)
+				.body(entryJson)
+				.when()
+				.delete("/api/sport/" + eventId + "/delete_entry")
+				.then()
+				.statusCode(204);
+
+		given()
+				.auth().oauth2(adminToken)
+				.when()
+				.get("/api/sport")
+				.then()
+				.statusCode(200)
+				.body("find { it.id == '" + eventId + "' }.entries.size()", Matchers.equalTo(0));
+	}
 
 }
